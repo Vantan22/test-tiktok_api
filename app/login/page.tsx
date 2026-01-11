@@ -28,7 +28,7 @@ export default function LoginPage() {
                 <form
                     action={async () => {
                         "use server";
-                        await signIn("tiktok");
+                        await signIn("tiktok", { redirectTo: "/" });
                     }}
                 >
                     <Button variant="outline" className="w-full" type="submit">

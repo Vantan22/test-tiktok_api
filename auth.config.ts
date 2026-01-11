@@ -7,28 +7,33 @@ export const authConfig = {
     callbacks: {
         authorized({ auth, request: { nextUrl } }) {
             const isLoggedIn = !!auth?.user;
-            const isOnDashboard = nextUrl.pathname.startsWith("/");
 
-            // Exclude public routes
+            // Public routes that don't require authentication
+            const publicPaths = ["/login", "/register"];
+            const isPublicPath = publicPaths.some(path => nextUrl.pathname.startsWith(path));
+
+            // API routes and static files always allowed
             if (
-                nextUrl.pathname.startsWith("/login") ||
-                nextUrl.pathname.startsWith("/register") ||
                 nextUrl.pathname.startsWith("/api") ||
                 nextUrl.pathname.startsWith("/_next") ||
-                nextUrl.pathname.includes(".") // static files
+                nextUrl.pathname.includes(".")
             ) {
-                if (isLoggedIn && (nextUrl.pathname.startsWith("/login") || nextUrl.pathname.startsWith("/register"))) {
-                    return Response.redirect(new URL("/", nextUrl));
-                }
                 return true;
             }
 
-            if (isOnDashboard) {
-                if (isLoggedIn) return true;
-                return false; // Redirect unauthenticated users to login page
+            // If user is logged in and tries to access login/register, redirect to home
+            if (isLoggedIn && isPublicPath) {
+                return Response.redirect(new URL("/", nextUrl));
             }
+
+            // If not logged in and trying to access protected route, redirect to login
+            if (!isLoggedIn && !isPublicPath) {
+                return Response.redirect(new URL("/login", nextUrl));
+            }
+
+            // Allow access
             return true;
         },
     },
-    providers: [], // Add providers with an empty array for now
+    providers: [],
 } satisfies NextAuthConfig;

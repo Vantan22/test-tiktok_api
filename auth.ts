@@ -32,8 +32,54 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
                 }
 
                 console.log("Invalid credentials");
-                return null; // Invalid credentials
+                return null;
             },
         }),
     ],
+    callbacks: {
+        async signIn({ user, account, profile }) {
+            if (account?.provider === "tiktok") {
+                try {
+                    await connectDB();
+
+                    // Check if user exists
+                    let dbUser = await User.findOne({ email: user.email });
+
+                    if (!dbUser) {
+                        // Create new user for TikTok OAuth
+                        dbUser = await User.create({
+                            email: user.email,
+                            name: user.name || profile?.display_name || "TikTok User",
+                            image: user.image || profile?.avatar_url,
+                            provider: "tiktok",
+                        });
+                    }
+
+                    return true;
+                } catch (error) {
+                    console.error("Error in signIn callback:", error);
+                    return false;
+                }
+            }
+            return true;
+        },
+        async jwt({ token, user, account }) {
+            if (user) {
+                token.id = user.id;
+                token.email = user.email;
+                token.name = user.name;
+                token.image = user.image;
+            }
+            return token;
+        },
+        async session({ session, token }) {
+            if (token && session.user) {
+                session.user.id = token.id as string;
+                session.user.email = token.email as string;
+                session.user.name = token.name as string;
+                session.user.image = token.image as string;
+            }
+            return session;
+        },
+    },
 });
