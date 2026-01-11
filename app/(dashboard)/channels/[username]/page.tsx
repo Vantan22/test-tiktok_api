@@ -11,7 +11,8 @@ import { Eye, Heart, Activity, Video } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
-export default async function ChannelDetailPage({ params }: { params: { username: string } }) {
+export default async function ChannelDetailPage(props: { params: Promise<{ username: string }> }) {
+    const params = await props.params;
     const data = await getChannel(params.username);
 
     if (!data) {

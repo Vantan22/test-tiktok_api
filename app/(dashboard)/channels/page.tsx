@@ -18,14 +18,10 @@ import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 
 // Since this is a server component, we handle searchParams directly
-export default async function ChannelsPage({
-    searchParams,
-}: {
-    // searchParams is a Promise in recent Next.js versions but in 14 it's object or Promise depending on config. 
-    // Next 15 it's Promise. Prompt says Next 14+. Next 14 stable searchParams is prop.
-    // We'll treat as object.
-    searchParams: { [key: string]: string | string[] | undefined };
+export default async function ChannelsPage(props: {
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+    const searchParams = await props.searchParams;
     const search = typeof searchParams.search === "string" ? searchParams.search : undefined;
     const view = typeof searchParams.view === "string" ? searchParams.view : "grid";
     const sortBy = typeof searchParams.sortBy === "string" ? searchParams.sortBy : "date";

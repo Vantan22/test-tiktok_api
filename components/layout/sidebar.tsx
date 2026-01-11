@@ -46,9 +46,9 @@ export function Sidebar() {
             <div className="px-3 py-2 flex-1">
                 <Link href="/" className="flex items-center pl-3 mb-14">
                     <div className="relative w-8 h-8 mr-4 bg-gradient-to-r from-pink-500 to-cyan-400 rounded-full flex items-center justify-center">
-                        <span className="font-bold text-white text-lg">T</span>
+                        <span className="font-bold text-white text-lg">NIUSDAY</span>
                     </div>
-                    <h1 className="text-xl font-bold">TikTok Manager</h1>
+                    <h1 className="text-xl font-bold">niusday.site</h1>
                 </Link>
                 <div className="space-y-1">
                     {routes.map((route) => (

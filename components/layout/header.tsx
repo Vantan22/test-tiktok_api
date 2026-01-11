@@ -1,16 +1,21 @@
 import { MobileSidebar } from "./mobile-sidebar";
-import { UserCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { UserNav } from "./user-nav";
+import { auth } from "@/auth";
 
-export function Header() {
+export async function Header() {
+    const session = await auth();
+
     return (
-        <div className="flex items-center p-4 border-b h-16 bg-white dark:bg-gray-900 shadow-sm">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-6 lg:h-[60px] lg:px-6">
             <MobileSidebar />
-            <div className="flex w-full justify-end">
-                <Button variant="ghost" size="icon">
-                    <UserCircle className="h-6 w-6" />
-                </Button>
+            <div className="w-full flex-1">
+                {/* Placeholder for search or breadcrumbs */}
             </div>
-        </div>
+            {session?.user ? (
+                <UserNav user={session.user} />
+            ) : (
+                <div className="h-8 w-8 rounded-full bg-slate-200 animate-pulse" />
+            )}
+        </header>
     );
 }
